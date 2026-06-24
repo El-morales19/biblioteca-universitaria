@@ -10,7 +10,8 @@ class Book extends Model
     'title',
     'author',
     'isbn',
-    'available'
+    'available',
+    'active'
 ]; //
   public function loans()
     {
