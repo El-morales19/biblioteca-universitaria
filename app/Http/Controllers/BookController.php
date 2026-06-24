@@ -33,7 +33,10 @@ class BookController extends Controller
        
         $validated['available'] = $request->has('available'); 
 
+        $validated['active'] = true;
+
         Book::create($validated);
+        
 
         return redirect()->route('books.index')->with('success', 'Libro creado exitosamente.');
     }
@@ -69,7 +72,7 @@ class BookController extends Controller
     public function destroy(Book $book)
     {
         $book->update([
-            'active' => false
+            'active' => false,
             'available' => false
         ]);
 
