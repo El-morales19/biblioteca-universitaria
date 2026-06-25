@@ -12,13 +12,14 @@
                     <form method="POST" action="{{ route('loans.store') }}">
                         @csrf
 
-                        <!-- Seleccionar Usuario -->
+                        <!-- Seleccionar Alumno -->
                         <div>
-                            <x-input-label for="user_id" :value="__('Usuario / Alumno')" />
-                            <select id="user_id" name="user_id" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required autofocus>
-                                <option value="" disabled selected>{{ __('Seleccione un usuario') }}</option>
+                            <x-input-label for="user_id" :value="__('Alumno')" />
+                            <x-text-input id="user_search" class="block mt-1 w-full" type="text" placeholder="{{ __('Buscar alumno por nombre o correo...') }}" />
+                            <select id="user_id" name="user_id" class="block mt-2 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required autofocus>
+                                <option value="" disabled selected>{{ __('Seleccione un alumno') }}</option>
                                 @foreach($users as $user)
-                                    <option value="{{ $user->id }}" {{ old('user_id') == $user->id ? 'selected' : '' }}>
+                                    <option value="{{ $user->id }}" data-name="{{ strtolower($user->name) }}" data-email="{{ strtolower($user->email) }}" {{ old('user_id') == $user->id ? 'selected' : '' }}>
                                         {{ $user->name }} ({{ $user->email }})
                                     </option>
                                 @endforeach
@@ -60,4 +61,30 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const searchInput = document.getElementById('user_search');
+            const select = document.getElementById('user_id');
+            const originalOptions = Array.from(select.options);
+
+            searchInput.addEventListener('input', function () {
+                const query = searchInput.value.toLowerCase().trim();
+                originalOptions.forEach(option => {
+                    if (option.disabled) {
+                        return;
+                    }
+                    const name = option.getAttribute('data-name') || '';
+                    const email = option.getAttribute('data-email') || '';
+                    if (name.includes(query) || email.includes(query)) {
+                        option.hidden = false;
+                        option.style.display = '';
+                    } else {
+                        option.hidden = true;
+                        option.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
 </x-app-layout>

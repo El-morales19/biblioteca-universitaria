@@ -92,4 +92,20 @@ class BookController extends Controller implements HasMiddleware
 
         return redirect()->route('books.index')->with('success', 'El libro ha sido dado de baja correctamente.');
     }
+
+    public function inactive()
+    {
+        $books = Book::where('active', false)->orderBy('created_at', 'desc')->get();
+        return view('books.inactive', compact('books'));
+    }
+
+    public function reactivate(Book $book)
+    {
+        $book->update([
+            'active' => true,
+            'available' => true
+        ]);
+
+        return redirect()->route('books.inactive')->with('success', 'El libro ha sido reactivado correctamente.');
+    }
 }

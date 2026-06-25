@@ -38,7 +38,10 @@ class LoanController extends Controller implements HasMiddleware
     public function create()
     {
         $books = Book::where('active', true)->where('available', true)->get();
-        $users = User::all();
+        $users = User::where('role', 'alumno')
+            ->where('active', true)
+            ->orderBy('name')
+            ->get();
         return view('loans.create', compact('books', 'users'));
     }
 
@@ -51,6 +54,13 @@ class LoanController extends Controller implements HasMiddleware
         ]);
 
         $book = Book::findOrFail($request->book_id);
+        $user = User::findOrFail($request->user_id);
+
+        if ($user->role !== 'alumno' || !$user->active) {
+            return back()
+                ->withErrors(['user_id' => 'El usuario seleccionado debe ser un alumno activo.'])
+                ->withInput();
+        }
 
         if (!$book->active || !$book->available) {
             return back()

@@ -22,65 +22,21 @@ class ReportController extends Controller implements HasMiddleware
         ];
     }
 
-    public function index()
+    public function index(\App\Services\Reports\ReportDataBuilder $builder)
     {
-        $role = auth()->user()->role;
-        $isStudentReport = ($role === 'alumno');
+        $data = $builder->build(auth()->user());
+        return view('reports.index', $data);
+    }
 
-        if ($isStudentReport) {
-            $totalActiveBooks = null;
-            $availableBooks = null;
-            $unavailableBooks = Loan::where('user_id', auth()->id())->where('status', 'active')->count();
+    public function exportPdf(\App\Services\Reports\ReportDataBuilder $builder, \App\Services\Reports\PdfReportExporter $exporter)
+    {
+        $data = $builder->build(auth()->user());
+        return $exporter->export($data);
+    }
 
-            $totalLoans = Loan::where('user_id', auth()->id())->count();
-            $activeLoans = Loan::where('user_id', auth()->id())->where('status', 'active')->count();
-            $returnedLoans = Loan::where('user_id', auth()->id())->where('status', 'returned')->count();
-
-            $activeLoanUsers = null;
-            $activeLoanBooks = Loan::where('user_id', auth()->id())
-                ->where('status', 'active')
-                ->with('book')
-                ->get();
-
-            $recentLoans = Loan::where('user_id', auth()->id())
-                ->with(['user', 'book'])
-                ->orderBy('created_at', 'desc')
-                ->limit(10)
-                ->get();
-        } else {
-            $totalActiveBooks = Book::where('active', true)->count();
-            $availableBooks = Book::where('active', true)->where('available', true)->count();
-            $unavailableBooks = Book::where('active', true)->where('available', false)->count();
-
-            $totalLoans = Loan::count();
-            $activeLoans = Loan::where('status', 'active')->count();
-            $returnedLoans = Loan::where('status', 'returned')->count();
-
-            $activeLoanUsers = User::whereHas('loans', function ($query) {
-                $query->where('status', 'active');
-            })->withCount(['loans' => function ($query) {
-                $query->where('status', 'active');
-            }])->get();
-
-            $activeLoanBooks = null;
-
-            $recentLoans = Loan::with(['user', 'book'])
-                ->orderBy('created_at', 'desc')
-                ->limit(10)
-                ->get();
-        }
-
-        return view('reports.index', compact(
-            'totalActiveBooks',
-            'availableBooks',
-            'unavailableBooks',
-            'totalLoans',
-            'activeLoans',
-            'returnedLoans',
-            'activeLoanUsers',
-            'activeLoanBooks',
-            'recentLoans',
-            'isStudentReport'
-        ));
+    public function exportExcel(\App\Services\Reports\ReportDataBuilder $builder, \App\Services\Reports\ExcelReportExporter $exporter)
+    {
+        $data = $builder->build(auth()->user());
+        return $exporter->export($data);
     }
 }

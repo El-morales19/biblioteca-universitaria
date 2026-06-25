@@ -128,5 +128,10 @@ class ReportTest extends TestCase
         $response->assertSee('Libros con préstamo activo');
         $response->assertSee('Book 1');
         $response->assertDontSee('Book 2');
+        $response->assertDontSee('Total Libros');
+        $response->assertDontSee('Libros Disponibles');
+        $response->assertDontSee('Total de libros activos');
+        $response->assertDontSee('Libros disponibles');
+        $response->assertDontSee('Usuarios con préstamos activos');
     }
 }
