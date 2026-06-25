@@ -47,35 +47,13 @@ class LoanController extends Controller implements HasMiddleware
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
             'book_id' => 'required|exists:books,id',
             'loan_date' => 'required|date',
         ]);
 
-        $book = Book::findOrFail($request->book_id);
-        $user = User::findOrFail($request->user_id);
-
-        if ($user->role !== 'alumno' || !$user->active) {
-            return back()
-                ->withErrors(['user_id' => 'El usuario seleccionado debe ser un alumno activo.'])
-                ->withInput();
-        }
-
-        if (!$book->active || !$book->available) {
-            return back()
-                ->withErrors(['book_id' => 'El libro seleccionado no está disponible para préstamo.'])
-                ->withInput();
-        }
-
-        Loan::create([
-            'user_id' => $request->user_id,
-            'book_id' => $request->book_id,
-            'loan_date' => $request->loan_date,
-            'status' => 'active',
-        ]);
-
-        $book->update(['available' => false]);
+        \App\Services\Loans\LoanFacade::createLoan($validated);
 
         return redirect()->route('loans.index')->with('success', 'Préstamo registrado exitosamente.');
     }
@@ -109,6 +87,9 @@ class LoanController extends Controller implements HasMiddleware
             ]);
 
             $loan->book->update(['available' => true]);
+
+            // Disparar evento para que el Mediator (Event Dispatcher) se encargue de notificar
+            \App\Events\BookReturned::dispatch($loan, $loan->user, $loan->book, $loan->return_date);
         }
 
         return redirect()->route('loans.index')->with('success', 'Préstamo actualizado y devuelto exitosamente.');

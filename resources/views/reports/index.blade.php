@@ -25,10 +25,12 @@
                     </div>
                 @endif
 
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-gray-100 p-6">
-                    <span class="text-xs text-gray-500 font-semibold uppercase tracking-wider block text-amber-600">{{ __('Préstamos Activos') }}</span>
-                    <span class="text-3xl font-bold text-amber-700 block mt-2">{{ $activeLoans }}</span>
-                </div>
+                @if(!$isStudentReport)
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-gray-100 p-6">
+                        <span class="text-xs text-gray-500 font-semibold uppercase tracking-wider block text-green-600">{{ __('Libros Disponibles') }}</span>
+                        <span class="text-3xl font-bold text-green-700 block mt-2">{{ $availableBooks }}</span>
+                    </div>
+                @endif
 
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-gray-100 p-6">
                     <span class="text-xs text-gray-500 font-semibold uppercase tracking-wider block text-red-600">
@@ -42,12 +44,10 @@
                     <span class="text-3xl font-bold text-gray-900 block mt-2">{{ $totalLoans }}</span>
                 </div>
 
-                @if(!$isStudentReport)
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-gray-100 p-6">
-                        <span class="text-xs text-gray-500 font-semibold uppercase tracking-wider block text-green-600">{{ __('Libros Disponibles') }}</span>
-                        <span class="text-3xl font-bold text-green-700 block mt-2">{{ $availableBooks }}</span>
-                    </div>
-                @endif
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-gray-100 p-6">
+                    <span class="text-xs text-gray-500 font-semibold uppercase tracking-wider block text-amber-600">{{ __('Préstamos Activos') }}</span>
+                    <span class="text-3xl font-bold text-amber-700 block mt-2">{{ $activeLoans }}</span>
+                </div>
 
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-gray-100 p-6">
                     <span class="text-xs text-gray-500 font-semibold uppercase tracking-wider block text-blue-600">{{ __('Préstamos Finalizados') }}</span>

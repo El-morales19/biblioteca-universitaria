@@ -11,6 +11,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/account-disabled', function() {
+    if(auth()->check() && auth()->user()->active) {
+        return redirect('/dashboard');
+    }
+    return view('account.disabled');
+})->middleware('auth')->name('account.disabled');
+
 Route::get('/dashboard', function () {
     $user = auth()->user();
     $data = [];
@@ -31,9 +38,9 @@ Route::get('/dashboard', function () {
     }
 
     return view('dashboard', $data);
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified', 'active'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'active'])->group(function () {
     Route::get('/books/inactive', [BookController::class, 'inactive'])->name('books.inactive');
     Route::patch('/books/{book}/reactivate', [BookController::class, 'reactivate'])->name('books.reactivate');
     Route::resource('books', BookController::class);
@@ -41,6 +48,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/users/inactive', [UserController::class, 'inactive'])->name('users.inactive');
     Route::patch('/users/{user}/restore', [UserController::class, 'restore'])->name('users.restore');
     Route::resource('users', UserController::class);
+
+    Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
