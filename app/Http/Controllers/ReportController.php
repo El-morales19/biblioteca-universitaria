@@ -5,9 +5,23 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Models\Loan;
 use App\Models\User;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
-class ReportController extends Controller
+class ReportController extends Controller implements HasMiddleware
 {
+
+    public static function middleware(): array
+    {
+        return [
+            function ($request, $next) {
+                if (!in_array(auth()->user()->role, ['admin', 'bibliotecario'])) {
+                    abort(403);
+                }
+                return $next($request);
+            }
+        ];
+    }
+
     public function index()
     {
         $totalActiveBooks = Book::where('active', true)->count();

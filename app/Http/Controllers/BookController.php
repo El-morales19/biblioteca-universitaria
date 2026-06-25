@@ -4,9 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class BookController extends Controller
+class BookController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware(function ($request, $next) {
+                if (!in_array(auth()->user()->role, ['admin', 'bibliotecario'])) {
+                    abort(403);
+                }
+                return $next($request);
+            }, except: ['index', 'show'])
+        ];
+    }
+
 
     public function index()
     {

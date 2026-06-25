@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -22,6 +23,9 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
     Route::resource('books', BookController::class);
     Route::resource('loans', LoanController::class);
+    Route::get('/users/inactive', [UserController::class, 'inactive'])->name('users.inactive');
+    Route::patch('/users/{user}/restore', [UserController::class, 'restore'])->name('users.restore');
+    Route::resource('users', UserController::class);
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

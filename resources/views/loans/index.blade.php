@@ -4,9 +4,11 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Control de Préstamos') }}
             </h2>
+            @if(in_array(auth()->user()->role, ['admin', 'bibliotecario']))
             <a href="{{ route('loans.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
                 {{ __('Nuevo Préstamo') }}
             </a>
+            @endif
         </div>
     </x-slot>
 
@@ -49,9 +51,11 @@
                             </svg>
                             <h3 class="text-lg font-medium text-gray-900 mb-1">{{ __('No hay préstamos registrados') }}</h3>
                             <p class="text-gray-500 text-sm mb-4">{{ __('Comienza registrando un nuevo préstamo de libro.') }}</p>
+                            @if(in_array(auth()->user()->role, ['admin', 'bibliotecario']))
                             <a href="{{ route('loans.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 active:bg-indigo-900 transition ease-in-out duration-150">
                                 {{ __('Nuevo Préstamo') }}
                             </a>
+                            @endif
                         </div>
                     @else
                         <div class="overflow-x-auto">
@@ -121,7 +125,7 @@
                                                 <a href="{{ route('loans.show', $loan) }}" class="text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded transition duration-150 inline-block">
                                                     {{ __('Ver') }}
                                                 </a>
-                                                @if($loan->status === 'active')
+                                                @if($loan->status === 'active' && in_array(auth()->user()->role, ['admin', 'bibliotecario']))
                                                     <a href="{{ route('loans.edit', $loan) }}" class="text-green-600 hover:text-green-900 bg-green-50 hover:bg-green-100 px-3 py-1.5 rounded transition duration-150 inline-block">
                                                         {{ __('Devolver') }}
                                                     </a>

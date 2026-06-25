@@ -63,7 +63,7 @@
                             </div>
                         </div>
 
-                        <!-- Acciones Rápidas -->
+                        @if(in_array(auth()->user()->role, ['admin', 'bibliotecario']))
                         <div class="flex items-center justify-between pt-6 border-t border-gray-100 space-x-3">
                             <form action="{{ route('books.destroy', $book) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas dar de baja este libro?');">
                                 @csrf
@@ -77,6 +77,7 @@
                                 {{ __('Editar información') }}
                             </a>
                         </div>
+                        @endif
                     </div>
                 </div>
             </div>

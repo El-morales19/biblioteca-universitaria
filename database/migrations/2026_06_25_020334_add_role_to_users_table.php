@@ -9,20 +9,29 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::table('users', function (Blueprint $table) {
-            //
-        });
-    }
+public function up(): void
+{
+    Schema::table('users', function (Blueprint $table) {
+        if (! Schema::hasColumn('users', 'role')) {
+            $table->string('role')->default('alumno');
+        }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::table('users', function (Blueprint $table) {
-            //
-        });
-    }
+        if (! Schema::hasColumn('users', 'active')) {
+            $table->boolean('active')->default(true);
+        }
+    });
+}
+
+public function down(): void
+{
+    Schema::table('users', function (Blueprint $table) {
+        if (Schema::hasColumn('users', 'role')) {
+            $table->dropColumn('role');
+        }
+
+        if (Schema::hasColumn('users', 'active')) {
+            $table->dropColumn('active');
+        }
+    });
+}
 };

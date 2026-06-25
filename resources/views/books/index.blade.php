@@ -4,9 +4,11 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 {{ __('Catálogo de Libros') }}
             </h2>
+            @if(in_array(auth()->user()->role, ['admin', 'bibliotecario']))
             <a href="{{ route('books.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
                 {{ __('Registrar Libro') }}
             </a>
+            @endif
         </div>
     </x-slot>
 
@@ -33,9 +35,11 @@
                             </svg>
                             <h3 class="text-lg font-medium text-gray-900 mb-1">{{ __('No hay libros registrados') }}</h3>
                             <p class="text-gray-500 text-sm mb-4">{{ __('Comienza agregando el primer libro al catálogo.') }}</p>
+                            @if(in_array(auth()->user()->role, ['admin', 'bibliotecario']))
                             <a href="{{ route('books.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none active:bg-blue-900 transition ease-in-out duration-150">
                                 {{ __('Registrar Libro') }}
                             </a>
+                            @endif
                             
                         </div>
                     @else
@@ -89,6 +93,7 @@
                                                 <a href="{{ route('books.show', $book) }}" class="text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded transition duration-150 inline-block">
                                                     {{ __('Ver') }}
                                                 </a>
+                                                @if(in_array(auth()->user()->role, ['admin', 'bibliotecario']))
                                                 <a href="{{ route('books.edit', $book) }}" class="text-amber-600 hover:text-amber-900 bg-amber-50 hover:bg-amber-100 px-3 py-1.5 rounded transition duration-150 inline-block">
                                                     {{ __('Editar') }}
                                                 </a>
@@ -99,6 +104,7 @@
                                                         {{ __('Dar de baja') }}
                                                     </button>
                                                 </form>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endforeach

@@ -6,12 +6,32 @@ use App\Models\Loan;
 use App\Models\Book;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 
-class LoanController extends Controller
+class LoanController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware(function ($request, $next) {
+                if (!in_array(auth()->user()->role, ['admin', 'bibliotecario'])) {
+                    abort(403);
+                }
+                return $next($request);
+            }, except: ['index', 'show'])
+        ];
+    }
+
     public function index()
     {
-        $loans = Loan::with(['user', 'book'])->orderBy('created_at', 'desc')->get();
+        $query = Loan::with(['user', 'book'])->orderBy('created_at', 'desc');
+
+        if (auth()->user()->role === 'alumno') {
+            $query->where('user_id', auth()->id());
+        }
+
+        $loans = $query->get();
         return view('loans.index', compact('loans'));
     }
 
@@ -52,6 +72,10 @@ class LoanController extends Controller
 
     public function show(Loan $loan)
     {
+        if (auth()->user()->role === 'alumno' && $loan->user_id !== auth()->id()) {
+            abort(403);
+        }
+
         $loan->load(['user', 'book']);
         return view('loans.show', compact('loan'));
     }

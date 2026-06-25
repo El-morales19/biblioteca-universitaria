@@ -10,11 +10,33 @@
                     </a>
                 </div>
 
-                <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
+                    @if(auth()->user()->role === 'admin')
+                        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                            {{ __('Usuarios') }}
+                        </x-nav-link>
+                    @endif
+
+                    <x-nav-link :href="route('books.index')" :active="request()->routeIs('books.*')">
+                        {{ __('Libros') }}
+                    </x-nav-link>
+
+                    @if(in_array(auth()->user()->role, ['admin', 'bibliotecario']))
+                        <x-nav-link :href="route('loans.index')" :active="request()->routeIs('loans.*')">
+                            {{ __('Préstamos') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')">
+                            {{ __('Reportes') }}
+                        </x-nav-link>
+                    @elseif(auth()->user()->role === 'alumno')
+                        <x-nav-link :href="route('loans.index')" :active="request()->routeIs('loans.*')">
+                            {{ __('Mis Préstamos') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -70,6 +92,29 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
+            @if(auth()->user()->role === 'admin')
+                <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                    {{ __('Usuarios') }}
+                </x-responsive-nav-link>
+            @endif
+
+            <x-responsive-nav-link :href="route('books.index')" :active="request()->routeIs('books.*')">
+                {{ __('Libros') }}
+            </x-responsive-nav-link>
+
+            @if(in_array(auth()->user()->role, ['admin', 'bibliotecario']))
+                <x-responsive-nav-link :href="route('loans.index')" :active="request()->routeIs('loans.*')">
+                    {{ __('Préstamos') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')">
+                    {{ __('Reportes') }}
+                </x-responsive-nav-link>
+            @elseif(auth()->user()->role === 'alumno')
+                <x-responsive-nav-link :href="route('loans.index')" :active="request()->routeIs('loans.*')">
+                    {{ __('Mis Préstamos') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
