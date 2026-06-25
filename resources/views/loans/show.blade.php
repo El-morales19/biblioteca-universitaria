@@ -91,17 +91,6 @@
                                     {{ __('Este préstamo ha sido finalizado.') }}
                                 </div>
                             @endif
-
-                            @if($loan->status !== 'finalizado')
-                                <!-- Acción secundaria de finalización -->
-                                <form action="{{ route('loans.destroy', $loan) }}" method="POST" class="inline-block" onsubmit="return confirm('¿Estás seguro de que deseas finalizar este préstamo?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-xs text-red-500 hover:text-red-700 hover:underline transition duration-150">
-                                        {{ __('Finalizar préstamo') }}
-                                    </button>
-                                </form>
-                            @endif
                         </div>
                     </div>
                 </div>
