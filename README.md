@@ -93,7 +93,7 @@ Biblioteca Universitaria es una implementación orientada a la gestión de recur
 * Laravel 13
 * Laravel Breeze
 * Tailwind CSS
-* MySQL
+* SQLite
 * DomPDF
 * Laravel Excel
 
