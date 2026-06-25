@@ -24,7 +24,8 @@ return new class extends Migration
 
             $table->enum('status', [
                 'active',
-                'returned'
+                'returned',
+                'finalizado'
             ])->default('active');
 
             $table->timestamps();
