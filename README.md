@@ -4,7 +4,7 @@ Sistema web de gestión bibliotecaria desarrollado en Laravel para la administra
 
 ## Descripción
 
-Biblioteca Universitaria es una aplicación web orientada a la gestión de recursos bibliográficos dentro de una institución educativa. El sistema implementa control de acceso basado en roles, baja lógica de registros, reportes estadísticos y exportación de información.
+Biblioteca Universitaria es una implementación orientada a la gestión de recursos bibliográficos dentro de una institución educativa. El sistema implementa control de acceso basado en roles, baja lógica de registros, reportes estadísticos y exportación de información.
 
 ## Características
 
@@ -150,7 +150,7 @@ php artisan test
 
 Proyecto desarrollado para la asignatura Implementación de Sistemas.
 
-Eli Morales
+Eli Morales.
 Licenciatura en Informática.
 Facultad de Contaduría y Administración.
 Universidad Nacional Autónoma de México.
