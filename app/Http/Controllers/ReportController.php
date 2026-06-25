@@ -14,7 +14,7 @@ class ReportController extends Controller implements HasMiddleware
     {
         return [
             function ($request, $next) {
-                if (!in_array(auth()->user()->role, ['admin', 'bibliotecario'])) {
+                if (!in_array(auth()->user()->role, ['admin', 'bibliotecario', 'alumno'])) {
                     abort(403);
                 }
                 return $next($request);
@@ -24,24 +24,51 @@ class ReportController extends Controller implements HasMiddleware
 
     public function index()
     {
-        $totalActiveBooks = Book::where('active', true)->count();
-        $availableBooks = Book::where('active', true)->where('available', true)->count();
-        $unavailableBooks = Book::where('active', true)->where('available', false)->count();
+        $role = auth()->user()->role;
+        $isStudentReport = ($role === 'alumno');
 
-        $totalLoans = Loan::count();
-        $activeLoans = Loan::where('status', 'active')->count();
-        $returnedLoans = Loan::where('status', 'returned')->count();
+        if ($isStudentReport) {
+            $totalActiveBooks = null;
+            $availableBooks = null;
+            $unavailableBooks = Loan::where('user_id', auth()->id())->where('status', 'active')->count();
 
-        $activeLoanUsers = User::whereHas('loans', function ($query) {
-            $query->where('status', 'active');
-        })->withCount(['loans' => function ($query) {
-            $query->where('status', 'active');
-        }])->get();
+            $totalLoans = Loan::where('user_id', auth()->id())->count();
+            $activeLoans = Loan::where('user_id', auth()->id())->where('status', 'active')->count();
+            $returnedLoans = Loan::where('user_id', auth()->id())->where('status', 'returned')->count();
 
-        $recentLoans = Loan::with(['user', 'book'])
-            ->orderBy('created_at', 'desc')
-            ->limit(10)
-            ->get();
+            $activeLoanUsers = null;
+            $activeLoanBooks = Loan::where('user_id', auth()->id())
+                ->where('status', 'active')
+                ->with('book')
+                ->get();
+
+            $recentLoans = Loan::where('user_id', auth()->id())
+                ->with(['user', 'book'])
+                ->orderBy('created_at', 'desc')
+                ->limit(10)
+                ->get();
+        } else {
+            $totalActiveBooks = Book::where('active', true)->count();
+            $availableBooks = Book::where('active', true)->where('available', true)->count();
+            $unavailableBooks = Book::where('active', true)->where('available', false)->count();
+
+            $totalLoans = Loan::count();
+            $activeLoans = Loan::where('status', 'active')->count();
+            $returnedLoans = Loan::where('status', 'returned')->count();
+
+            $activeLoanUsers = User::whereHas('loans', function ($query) {
+                $query->where('status', 'active');
+            })->withCount(['loans' => function ($query) {
+                $query->where('status', 'active');
+            }])->get();
+
+            $activeLoanBooks = null;
+
+            $recentLoans = Loan::with(['user', 'book'])
+                ->orderBy('created_at', 'desc')
+                ->limit(10)
+                ->get();
+        }
 
         return view('reports.index', compact(
             'totalActiveBooks',
@@ -51,7 +78,9 @@ class ReportController extends Controller implements HasMiddleware
             'activeLoans',
             'returnedLoans',
             'activeLoanUsers',
-            'recentLoans'
+            'activeLoanBooks',
+            'recentLoans',
+            'isStudentReport'
         ));
     }
 }
